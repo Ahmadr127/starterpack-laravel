@@ -10,59 +10,68 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray-100">
-    <div x-data="{ sidebarOpen: false }" class="min-h-screen flex">
+    <div x-data="{
+            sidebarOpen: false,
+            sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === '1',
+        }"
+        x-init="$watch('sidebarCollapsed', v => localStorage.setItem('sidebarCollapsed', v ? '1' : '0'))"
+        class="min-h-screen flex">
         <!-- Sidebar -->
-        <div :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
-             class="fixed inset-y-0 left-0 z-50 w-64 bg-green-700 shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0">
+        <div :class="[
+                sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+                sidebarCollapsed ? 'w-20' : 'w-64'
+            ]"
+            class="fixed inset-y-0 left-0 z-50 bg-green-700 shadow-lg transform transition-all duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0">
             
             <!-- Logo/Brand -->
-            <div class="flex items-center justify-center h-20 px-4 border-b border-green-600">
-                <div class="flex flex-col items-center space-y-1">
-                    <div class="bg-white rounded-xl border border-green-200 shadow-sm p-2">
+            <div class="flex items-center justify-between h-20 px-4 border-b border-green-600">
+                <div class="flex items-center space-x-3 overflow-hidden">
+                    <div class="bg-white rounded-xl border border-green-200 shadow-sm p-2 flex-shrink-0">
                         <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8 w-auto object-contain">
                     </div>
-                    <h1 class="text-xl font-bold text-white tracking-wide">Library RS</h1>
+                    <h1 x-show="!sidebarCollapsed" class="text-xl font-bold text-white tracking-wide truncate">Library RS</h1>
                 </div>
+                
             </div>
 
             <!-- Sidebar Navigation -->
             <nav class="px-4 py-6">
                 <div class="mb-6">
-                    <h3 class="text-xs font-semibold text-green-200 uppercase tracking-wider mb-3">MENU UTAMA</h3>
+                    <h3 x-show="!sidebarCollapsed" class="text-xs font-semibold text-green-200 uppercase tracking-wider mb-3">MENU UTAMA</h3>
                 </div>
                 
                 <ul class="space-y-2">
                     <li>
-                        <a href="{{ route('dashboard') }}" class="flex items-center px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors {{ request()->routeIs('dashboard') ? 'bg-green-800' : '' }}">
-                            <i class="fas fa-tachometer-alt w-5 mr-3"></i>
-                            Dashboard
+                        <a href="{{ route('dashboard') }}" class="flex items-center px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors {{ request()->routeIs('dashboard') ? 'bg-green-800' : '' }}" :class="sidebarCollapsed ? 'justify-center' : ''" title="Dashboard">
+                            <i class="fas fa-tachometer-alt w-5" :class="sidebarCollapsed ? '' : 'mr-3'"></i>
+                            <span x-show="!sidebarCollapsed">Dashboard</span>
                         </a>
                     </li>
                     
 
                     @if(auth()->user()->hasPermission('manage_users'))
                     <li>
-                        <a href="{{ route('users.index') }}" class="flex items-center px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors {{ request()->routeIs('users.*') ? 'bg-green-800' : '' }}">
-                            <i class="fas fa-users w-5 mr-3"></i>
-                            Users
+                        <a href="{{ route('users.index') }}" class="flex items-center px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors {{ request()->routeIs('users.*') ? 'bg-green-800' : '' }}" :class="sidebarCollapsed ? 'justify-center' : ''" title="Users">
+                            <i class="fas fa-users w-5" :class="sidebarCollapsed ? '' : 'mr-3'"></i>
+                            <span x-show="!sidebarCollapsed">Users</span>
                         </a>
                     </li>
                     @endif
 
                     @if(auth()->user()->hasPermission('manage_roles'))
                     <li>
-                        <a href="{{ route('roles.index') }}" class="flex items-center px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors {{ request()->routeIs('roles.*') ? 'bg-green-800' : '' }}">
-                            <i class="fas fa-user-shield w-5 mr-3"></i>
-                            Roles
+                        <a href="{{ route('roles.index') }}" class="flex items-center px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors {{ request()->routeIs('roles.*') ? 'bg-green-800' : '' }}" :class="sidebarCollapsed ? 'justify-center' : ''" title="Roles">
+                            <i class="fas fa-user-shield w-5" :class="sidebarCollapsed ? '' : 'mr-3'"></i>
+                            <span x-show="!sidebarCollapsed">Roles</span>
                         </a>
                     </li>
                     @endif
 
                     @if(auth()->user()->hasPermission('manage_permissions'))
                     <li>
-                        <a href="{{ route('permissions.index') }}" class="flex items-center px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors {{ request()->routeIs('permissions.*') ? 'bg-green-800' : '' }}">
-                            <i class="fas fa-key w-5 mr-3"></i>
-                            Permissions
+                        <a href="{{ route('permissions.index') }}" class="flex items-center px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors {{ request()->routeIs('permissions.*') ? 'bg-green-800' : '' }}" :class="sidebarCollapsed ? 'justify-center' : ''" title="Permissions">
+                            <i class="fas fa-key w-5" :class="sidebarCollapsed ? '' : 'mr-3'"></i>
+                            <span x-show="!sidebarCollapsed">Permissions</span>
                         </a>
                     </li>
                     @endif
@@ -71,15 +80,15 @@
 
                 <!-- User Profile Section -->
                 <div class="mt-8 pt-6 border-t border-green-600">
-                    <div class="flex items-center px-4 py-3 text-white">
-                        <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
+                    <div class="flex items-center px-4 py-3 text-white" :class="sidebarCollapsed ? 'justify-center' : ''">
+                        <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center" :class="sidebarCollapsed ? '' : 'mr-3'">
                             <i class="fas fa-user text-sm"></i>
                         </div>
-                        <div class="flex-1">
-                            <div class="text-sm font-medium">{{ auth()->user()->name }}</div>
-                            <div class="text-xs text-green-200">{{ auth()->user()->role->display_name ?? 'User' }}</div>
+                        <div x-show="!sidebarCollapsed" class="flex-1 overflow-hidden">
+                            <div class="text-sm font-medium truncate">{{ auth()->user()->name }}</div>
+                            <div class="text-xs text-green-200 truncate">{{ auth()->user()->role->display_name ?? 'User' }}</div>
                         </div>
-                        <i class="fas fa-chevron-down text-xs text-green-200"></i>
+                        <i x-show="!sidebarCollapsed" class="fas fa-chevron-down text-xs text-green-200"></i>
                     </div>
                 </div>
             </nav>
@@ -91,8 +100,11 @@
             <header class="bg-white shadow-sm border-b border-gray-200">
                 <div class="flex items-center justify-between h-16 px-6">
                     <div class="flex items-center">
-                        <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden mr-4 p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100">
-                            <i class="fas fa-bars"></i>
+                        <button @click="window.innerWidth >= 1024 ? sidebarCollapsed = !sidebarCollapsed : sidebarOpen = !sidebarOpen" class="mr-4 p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors" :title="window.innerWidth >= 1024 ? (sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar') : (sidebarOpen ? 'Close menu' : 'Open menu')">
+                            <!-- Mobile icon -->
+                            <i class="fas" :class="sidebarOpen ? 'fa-xmark' : 'fa-bars'" class="lg:hidden"></i>
+                            <!-- Desktop icon -->
+                            <i class="fas hidden lg:inline" :class="sidebarCollapsed ? 'fa-angles-right' : 'fa-angles-left'"></i>
                         </button>
                         <div>
                             <h2 class="text-xl font-semibold text-gray-800">@yield('title', 'Dashboard')</h2>
