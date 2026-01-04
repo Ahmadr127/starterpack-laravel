@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'organization_unit_id',
     ];
 
     /**
@@ -64,5 +65,10 @@ class User extends Authenticatable
     public function hasPermission($permission)
     {
         return $this->role->hasPermission($permission);
+    }
+
+    public function organizationUnit()
+    {
+        return $this->belongsTo(OrganizationUnit::class);
     }
 }

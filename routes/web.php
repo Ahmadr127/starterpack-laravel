@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\OrganizationTypeController;
+use App\Http\Controllers\OrganizationUnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +51,24 @@ Route::middleware('auth')->group(function () {
     // Permission Management routes
     Route::middleware('permission:manage_permissions')->group(function () {
         Route::resource('permissions', PermissionController::class);
+    });
+
+    // Organization Type Management routes
+    Route::middleware('permission:manage_organization_types')->group(function () {
+        Route::resource('organization-types', OrganizationTypeController::class);
+    });
+
+    // Organization Unit Management routes
+    Route::middleware('permission:manage_organization_units')->group(function () {
+        Route::resource('organization-units', OrganizationUnitController::class);
+        
+        // Member management routes
+        Route::post('organization-units/{organization_unit}/members', [OrganizationUnitController::class, 'addMember'])
+            ->name('organization-units.add-member');
+        Route::delete('organization-units/{organization_unit}/members/{user}', [OrganizationUnitController::class, 'removeMember'])
+            ->name('organization-units.remove-member');
+        Route::patch('organization-units/{organization_unit}/head', [OrganizationUnitController::class, 'updateHead'])
+            ->name('organization-units.update-head');
     });
 
 });
