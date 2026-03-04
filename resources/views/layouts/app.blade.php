@@ -207,6 +207,11 @@
                                         Dashboard
                                     </a>
                                     @endif
+
+                                    <a href="{{ route('profile.index') }}" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                        <i class="fas fa-user-circle w-4 h-4 mr-2 text-gray-400"></i>
+                                        Profil
+                                    </a>
                                     
                                     <div class="border-t border-gray-100 my-1"></div>
                                     

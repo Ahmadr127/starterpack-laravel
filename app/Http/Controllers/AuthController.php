@@ -25,20 +25,24 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string',
+            'login' => 'required|string',
             'password' => 'required'
+        ], [
+            'login.required' => 'The email atau username field is required.',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Manual authentication using username
-        $user = User::where('username', $request->username)->first();
+        $loginType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        // Manual authentication using username or email
+        $user = User::where($loginType, $request->login)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return back()->withErrors([
-                'username' => 'Username atau password salah.',
+                'login' => 'Email/Username atau password salah.',
             ])->withInput();
         }
 

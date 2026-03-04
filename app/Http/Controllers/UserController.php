@@ -48,6 +48,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'nik' => 'nullable|string|max:50|unique:users',
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
@@ -60,6 +61,7 @@ class UserController extends Controller
 
         User::create([
             'name' => $request->name,
+            'nik' => $request->nik,
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -79,6 +81,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'nik' => 'nullable|string|max:50|unique:users,nik,' . $user->id,
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
@@ -91,6 +94,7 @@ class UserController extends Controller
 
         $data = [
             'name' => $request->name,
+            'nik' => $request->nik,
             'username' => $request->username,
             'email' => $request->email,
             'role_id' => $request->role_id
