@@ -12,7 +12,12 @@ class Role extends Model
     protected $fillable = [
         'name',
         'display_name',
-        'description'
+        'description',
+        'is_active'
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function users()

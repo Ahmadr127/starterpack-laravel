@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             'username' => 'admin',
             'email' => 'admin@example.com',
             'role_id' => $adminRole->id,
+            'password' => bcrypt('rsazra'), // Change this to a secure password
         ]);
     }
 }

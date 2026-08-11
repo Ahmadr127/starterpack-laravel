@@ -1,12 +1,12 @@
 /**
- * Sidebar Styles - Smooth transitions without flicker
- * Uses CSS-driven width changes instead of JavaScript DOM manipulation
+ * Sidebar Mechanics - Collapse width, transitions, text hiding
+ * All theming/colors are handled by Tailwind utilities in resources/css/app.css
  */
 
 /* CSS Variables for sidebar width */
 :root {
-    --sidebar-width: 16rem; /* Default: expanded (w-64 = 256px = 16rem) */
-    --sidebar-collapsed-width: 5rem; /* w-20 = 80px = 5rem */
+    --sidebar-width: 215px; /* Default: expanded */
+    --sidebar-collapsed-width: 55px; /* Collapsed (mini) */
     --sidebar-transition: width 300ms ease-in-out;
 }
 
@@ -54,7 +54,7 @@ html, body {
     visibility: hidden;
 }
 
-/* Icon margin adjustment */
+/* Icon margin adjustment when collapsed */
 .sidebar-icon {
     transition: margin 150ms ease-in-out;
 }
@@ -63,29 +63,58 @@ html, body {
     margin-right: 0 !important;
 }
 
+/* Hide dropdown submenus when collapsed to prevent icon cutoff/overlap */
+.sidebar-collapsed .sidebar-submenu {
+    display: none !important;
+}
+
+/* Hide group titles when collapsed */
+.sidebar-collapsed .sidebar-title {
+    display: none;
+}
+
+/* Hide brand logo when collapsed */
+.sidebar-collapsed .sidebar-brand-logo {
+    display: none;
+}
+
+/* Collapsed header like Simmutu mini mode */
+.sidebar-collapsed .sidebar-header {
+    padding: 1rem 0.5rem;
+    justify-content: center;
+}
+
+/* Collapsed: center icons (Simmutu mini padding) */
+.sidebar-collapsed .sidebar-link,
+.sidebar-collapsed .sidebar-btn {
+    justify-content: center;
+    gap: 0;
+    padding: 0.7rem 0.5rem;
+}
+
 /* Custom Scrollbar for Sidebar */
 .sidebar-scroll::-webkit-scrollbar {
     width: 6px;
 }
 
 .sidebar-scroll::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.03);
     border-radius: 10px;
 }
 
 .sidebar-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 10px;
 }
 
 .sidebar-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.25);
 }
 
 /* For Firefox */
 .sidebar-scroll {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+    scrollbar-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.03);
 }
 
 /* Mobile sidebar - use transform for slide */
@@ -93,7 +122,7 @@ html, body {
     .sidebar {
         transform: translateX(-100%);
         transition: transform 300ms ease-in-out;
-        width: 16rem !important; /* Always full width on mobile */
+        width: 215px !important; /* Always full width on mobile */
     }
     
     .sidebar.mobile-open {

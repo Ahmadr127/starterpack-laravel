@@ -7,7 +7,22 @@
     <title>@yield('title', 'Sistem')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="icon" type="image/x-icon" href="{{ asset('images/logo.png') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    {{-- Google Fonts: non-blocking, fallback system font sambil menunggu --}}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap">
+    </noscript>
+    {{-- Icon fonts: non-blocking agar tidak menahan render halaman --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </noscript>
     
     {{-- Sidebar CSS --}}
     <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
@@ -24,128 +39,91 @@
     <div x-data="sidebarComponent()" x-init="init()" class="h-full flex overflow-x-hidden">
         
         <!-- Sidebar: No x-cloak, use CSS to control visibility -->
-        <div class="sidebar fixed inset-y-0 left-0 z-50 bg-green-700 shadow-lg flex flex-col h-screen lg:static lg:inset-0"
+        <div class="sidebar fixed inset-y-0 left-0 z-50 bg-white flex flex-col h-screen lg:static lg:inset-0"
              :class="{ 'mobile-open': mobileOpen }">
             
             <!-- Logo/Brand -->
-            <div class="flex items-center justify-between h-20 px-4 border-b border-green-600 flex-shrink-0">
-                <div class="flex items-center space-x-3 overflow-hidden">
-                    <div class="bg-white rounded-xl border border-green-200 shadow-sm p-2 flex-shrink-0">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8 w-auto object-contain">
-                    </div>
+            <div class="sidebar-header flex items-center justify-between px-6 pt-6 pb-3 border-b border-gray-100 flex-shrink-0">
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="sidebar-brand-logo h-[1.875rem] w-auto object-contain flex-shrink-0">
                     {{-- Use CSS-driven visibility instead of x-show --}}
-                    <h1 class="sidebar-text text-xl font-bold text-white tracking-wide truncate">Sistem</h1>
+                    <span class="sidebar-text sidebar-brand-text truncate">Sistem</span>
                 </div>
             </div>
 
             <!-- Sidebar Navigation -->
-            <nav class="flex-1 overflow-y-auto sidebar-scroll px-4 py-6">
-                
-                {{-- Dashboard --}}
-                @if(auth()->user()->hasPermission('view_dashboard'))
-                <div class="mb-4">
-                    <a href="{{ route('dashboard') }}" 
-                       class="sidebar-link flex items-center px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors {{ request()->routeIs('dashboard') ? 'bg-green-800' : '' }}" 
-                       title="Dashboard">
-                        <i class="fas fa-tachometer-alt w-5 sidebar-icon mr-3"></i>
-                        <span class="sidebar-text">Dashboard</span>
-                    </a>
-                </div>
-                @endif
+            <nav class="flex-1 overflow-y-auto sidebar-scroll px-6 pt-6">
+                @php
+                    $menuGroups = config('menu');
+                    $canAccess = function ($item) {
+                        if (isset($item['permission'])) {
+                            return auth()->user()->hasPermission($item['permission']);
+                        }
+                        if (isset($item['permissions'])) {
+                            foreach ($item['permissions'] as $p) {
+                                if (auth()->user()->hasPermission($p)) {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    };
+                @endphp
 
-                {{-- User & Access Management Submenu --}}
-                @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_roles') || auth()->user()->hasPermission('manage_permissions'))
-                <div class="mb-4" x-data="{ open: {{ request()->routeIs('users.*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'true' : 'false' }} }">
-                <button @click="open = !open" 
-                        class="w-full flex items-center justify-between px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors">
-                    <div class="flex items-center">
-                            <i class="fas fa-users-cog w-5 sidebar-icon mr-3"></i>
-                            <span class="sidebar-text">Pengguna & Akses</span>
-                        </div>
-                        <i class="fas fa-chevron-down sidebar-text text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
-                    </button>
-                    
-                    <div x-show="open" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 -translate-y-2"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-150"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 -translate-y-2"
-                         class="mt-1 ml-4 pl-4 border-l-2 border-green-600 space-y-1">
-                        
-                        @if(auth()->user()->hasPermission('manage_users'))
-                        <a href="{{ route('users.index') }}" 
-                           class="flex items-center px-3 py-2 text-green-100 rounded-lg hover:bg-green-800 hover:text-white transition-colors text-sm {{ request()->routeIs('users.*') ? 'bg-green-800 text-white' : '' }}"
-                           title="Users">
-                            <i class="fas fa-users w-4 mr-2"></i>
-                            <span class="sidebar-text">Users</span>
-                        </a>
-                        @endif
-                        
-                        @if(auth()->user()->hasPermission('manage_roles'))
-                        <a href="{{ route('roles.index') }}" 
-                           class="flex items-center px-3 py-2 text-green-100 rounded-lg hover:bg-green-800 hover:text-white transition-colors text-sm {{ request()->routeIs('roles.*') ? 'bg-green-800 text-white' : '' }}"
-                           title="Roles">
-                            <i class="fas fa-user-shield w-4 mr-2"></i>
-                            <span class="sidebar-text">Roles</span>
-                        </a>
-                        @endif
-                        
-                        @if(auth()->user()->hasPermission('manage_permissions'))
-                        <a href="{{ route('permissions.index') }}" 
-                           class="flex items-center px-3 py-2 text-green-100 rounded-lg hover:bg-green-800 hover:text-white transition-colors text-sm {{ request()->routeIs('permissions.*') ? 'bg-green-800 text-white' : '' }}"
-                           title="Permissions">
-                            <i class="fas fa-key w-4 mr-2"></i>
-                            <span class="sidebar-text">Permissions</span>
-                        </a>
-                        @endif
-                    </div>
-                </div>
-                @endif
+                @foreach($menuGroups as $group)
+                    @php $visible = array_values(array_filter($group['menus'], $canAccess)); @endphp
+                    @if(count($visible) > 0)
+                        <p class="sidebar-title">{{ $group['title'] }}</p>
 
-                {{-- Organization Management Submenu --}}
-                @if(auth()->user()->hasPermission('manage_organization_types') || auth()->user()->hasPermission('manage_organization_units'))
-                <div class="mb-4" x-data="{ open: {{ request()->routeIs('organization-types.*') || request()->routeIs('organization-units.*') ? 'true' : 'false' }} }">
-                <button @click="open = !open" 
-                        class="w-full flex items-center justify-between px-4 py-3 text-white rounded-lg hover:bg-green-800 transition-colors">
-                    <div class="flex items-center">
-                            <i class="fas fa-building w-5 sidebar-icon mr-3"></i>
-                            <span class="sidebar-text">Organisasi</span>
-                        </div>
-                        <i class="fas fa-chevron-down sidebar-text text-xs transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
-                    </button>
-                    
-                    <div x-show="open" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 -translate-y-2"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-150"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 -translate-y-2"
-                         class="mt-1 ml-4 pl-4 border-l-2 border-green-600 space-y-1">
-                        
-                        @if(auth()->user()->hasPermission('manage_organization_types'))
-                        <a href="{{ route('organization-types.index') }}" 
-                           class="flex items-center px-3 py-2 text-green-100 rounded-lg hover:bg-green-800 hover:text-white transition-colors text-sm {{ request()->routeIs('organization-types.*') ? 'bg-green-800 text-white' : '' }}"
-                           title="Tipe Organisasi">
-                            <i class="fas fa-sitemap w-4 mr-2"></i>
-                            <span class="sidebar-text">Tipe Organisasi</span>
-                        </a>
-                        @endif
-                        
-                        @if(auth()->user()->hasPermission('manage_organization_units'))
-                        <a href="{{ route('organization-units.index') }}" 
-                           class="flex items-center px-3 py-2 text-green-100 rounded-lg hover:bg-green-800 hover:text-white transition-colors text-sm {{ request()->routeIs('organization-units.*') ? 'bg-green-800 text-white' : '' }}"
-                           title="Unit Organisasi">
-                            <i class="fas fa-diagram-project w-4 mr-2"></i>
-                            <span class="sidebar-text">Unit Organisasi</span>
-                        </a>
-                        @endif
-                    </div>
-                </div>
-                @endif
-
+                        @foreach($visible as $item)
+                            @if(isset($item['children']))
+                                @php
+                                    $childPatterns = array_column($item['children'], 'route_pattern');
+                                    $isOpen = request()->routeIs($childPatterns);
+                                @endphp
+                                <div class="mb-1" x-data="{ open: {{ $isOpen ? 'true' : 'false' }} }">
+                                    <button @click="open = !open" 
+                                            class="sidebar-btn w-full justify-between">
+                                        <div class="flex items-center">
+                                            <i class="bi {{ $item['icon'] }} sidebar-icon"></i>
+                                            <span class="sidebar-text">{{ $item['label'] }}</span>
+                                        </div>
+                                        <i class="bi bi-chevron-down sidebar-text sidebar-chevron" :class="{ 'rotate-180': open }"></i>
+                                    </button>
+                                    
+                                    <div x-show="open" 
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 -translate-y-2"
+                                         x-transition:enter-end="opacity-100 translate-y-0"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-100 translate-y-0"
+                                         x-transition:leave-end="opacity-0 -translate-y-2"
+                                         class="sidebar-submenu mt-1 space-y-0.5">
+                                        @foreach($item['children'] as $child)
+                                            @if($canAccess($child))
+                                            <a href="{{ route($child['route']) }}" 
+                                               class="{{ request()->routeIs($child['route_pattern']) ? 'active' : '' }}"
+                                               title="{{ $child['label'] }}">
+                                                <i class="bi {{ $child['icon'] }}"></i>
+                                                <span class="sidebar-text">{{ $child['label'] }}</span>
+                                            </a>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @else
+                                <div class="mb-1">
+                                    <a href="{{ route($item['route']) }}" 
+                                       class="sidebar-link {{ request()->routeIs($item['route_pattern'] ?? $item['route']) ? 'active' : '' }}" 
+                                       title="{{ $item['label'] }}">
+                                        <i class="bi {{ $item['icon'] }} sidebar-icon"></i>
+                                        <span class="sidebar-text">{{ $item['label'] }}</span>
+                                    </a>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endif
+                @endforeach
             </nav>
         </div>
 
@@ -153,7 +131,7 @@
         <div class="flex-1 flex flex-col lg:ml-0 overflow-x-hidden max-w-full h-full">
             <!-- Top Navigation Bar -->
             <header class="bg-white shadow-sm border-b border-gray-200">
-                <div class="flex items-center justify-between h-16 px-6">
+                <div class="flex items-center justify-between h-14 px-4">
                     <div class="flex items-center space-x-4">
                         <!-- Toggle Button with separated logic -->
                         <button @click="toggle()" 
@@ -166,13 +144,13 @@
                         </button>
                         
                         <div class="hidden sm:block">
-                            <h2 class="text-xl font-semibold text-gray-800">@yield('title', 'Dashboard')</h2>
+                            <h2 class="text-xl font-extrabold text-sp-navy">@yield('title', 'Dashboard')</h2>
                             <p class="text-sm text-gray-500">Sistem</p>
                         </div>
                         
                         <!-- Mobile Title -->
                         <div class="sm:hidden">
-                            <h2 class="text-lg font-semibold text-gray-800">@yield('title', 'Dashboard')</h2>
+                            <h2 class="text-lg font-extrabold text-sp-navy">@yield('title', 'Dashboard')</h2>
                         </div>
                     </div>
                     
@@ -180,7 +158,7 @@
                         <!-- User Dropdown -->
                         <div class="relative" x-data="{ open: false }" @click.away="open = false">
                             <button @click="open = !open" class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
-                                <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                                <div class="w-8 h-8 bg-sp-primary rounded-full flex items-center justify-center">
                                     <i class="fas fa-user text-sm text-white"></i>
                                 </div>
                                 <div class="text-left hidden sm:block">
@@ -232,7 +210,7 @@
             </header>
 
             <!-- Page Content -->
-            <main class="flex-1 p-3 sm:p-4 lg:p-5 bg-gray-50 overflow-y-auto overflow-x-hidden max-w-full">
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 bg-gray-50 overflow-y-auto overflow-x-hidden max-w-full">
                 @yield('content')
             </main>
         </div>
@@ -254,6 +232,7 @@
     {{-- Load Alpine.js AFTER sidebar component is defined --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
+    <script src="{{ asset('js/chart.umd.min.js') }}"></script>
     <script src="{{ asset('js/toast.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function(){

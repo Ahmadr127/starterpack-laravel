@@ -6,7 +6,7 @@
 // CRITICAL: Initialize sidebar state BEFORE Alpine loads to prevent flicker
 (function() {
     const isCollapsed = localStorage.getItem('sidebarCollapsed') === '1';
-    document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '5rem' : '16rem');
+    document.documentElement.style.setProperty('--sidebar-width', isCollapsed ? '55px' : '215px');
     document.documentElement.classList.toggle('sidebar-collapsed', isCollapsed);
 })();
 
@@ -32,7 +32,7 @@ function sidebarComponent() {
                 // Desktop: toggle collapsed state via CSS class AND CSS variable
                 this.isCollapsed = !this.isCollapsed;
                 document.documentElement.classList.toggle('sidebar-collapsed', this.isCollapsed);
-                document.documentElement.style.setProperty('--sidebar-width', this.isCollapsed ? '5rem' : '16rem');
+                document.documentElement.style.setProperty('--sidebar-width', this.isCollapsed ? '55px' : '215px');
                 localStorage.setItem('sidebarCollapsed', this.isCollapsed ? '1' : '0');
                 
                 // Dispatch event for responsive components
