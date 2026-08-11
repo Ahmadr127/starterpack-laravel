@@ -41,6 +41,7 @@ document.addEventListener('alpine:init', () => {
         columns: config.columns || [],
         rows: config.rows || [],
         perPage: config.perPage || 10,
+        perPageOptions: config.perPageOptions || [5, 10, 25, 50, 100],
         empty: config.empty || 'Tidak ada data.',
         searchPlaceholder: config.searchPlaceholder || 'Cari...',
         page: 1,

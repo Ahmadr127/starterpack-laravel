@@ -21,7 +21,9 @@ class OrganizationTypeController extends Controller
             });
         }
 
-        $types = $query->orderBy('level')->paginate(10)->withQueryString();
+        $perPage = in_array((int) $request->input('per_page', 10), [5, 10, 25, 50, 100]) ? (int) $request->input('per_page', 10) : 10;
+
+        $types = $query->orderBy('level')->paginate($perPage)->withQueryString();
         
         return view('organization-types.index', compact('types'));
     }

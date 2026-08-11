@@ -38,7 +38,9 @@ class OrganizationUnitController extends Controller
             $query->where('is_active', $request->is_active);
         }
 
-        $units = $query->orderBy('type_id')->orderBy('name')->paginate(10)->withQueryString();
+        $perPage = in_array((int) $request->input('per_page', 10), [5, 10, 25, 50, 100]) ? (int) $request->input('per_page', 10) : 10;
+
+        $units = $query->orderBy('type_id')->orderBy('name')->paginate($perPage)->withQueryString();
         $types = OrganizationType::orderBy('level')->get();
         $parentUnits = OrganizationUnit::orderBy('name')->get();
         

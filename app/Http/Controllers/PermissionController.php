@@ -30,7 +30,9 @@ class PermissionController extends Controller
             $query->where('created_at', '<=', $request->date_to);
         }
 
-        $permissions = $query->latest()->paginate(10)->withQueryString();
+        $perPage = in_array((int) $request->input('per_page', 10), [5, 10, 25, 50, 100]) ? (int) $request->input('per_page', 10) : 10;
+
+        $permissions = $query->latest()->paginate($perPage)->withQueryString();
         
         return view('permissions.index', compact('permissions'));
     }

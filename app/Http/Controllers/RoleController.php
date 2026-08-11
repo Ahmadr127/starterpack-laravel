@@ -37,7 +37,9 @@ class RoleController extends Controller
             $query->where('created_at', '<=', $request->date_to);
         }
 
-        $roles = $query->latest()->paginate(10)->withQueryString();
+        $perPage = in_array((int) $request->input('per_page', 10), [5, 10, 25, 50, 100]) ? (int) $request->input('per_page', 10) : 10;
+
+        $roles = $query->latest()->paginate($perPage)->withQueryString();
         $permissions = Permission::all();
 
         return view('roles.index', compact('roles', 'permissions', 'totalRoles', 'activeRoles', 'inactiveRoles'));

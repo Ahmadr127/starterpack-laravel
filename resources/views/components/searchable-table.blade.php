@@ -2,6 +2,7 @@
     'columns' => [],      // [['key' => 'name', 'label' => 'Nama'], ...]
     'rows' => [],         // array of associative arrays: [['name' => '...', 'email' => '...'], ...]
     'perPage' => 10,
+    'perPageOptions' => [5, 10, 25, 50, 100],
     'empty' => 'Tidak ada data.',
     'searchPlaceholder' => 'Cari...',
 ])
@@ -11,6 +12,7 @@
         'columns' => $columns,
         'rows' => $rows,
         'perPage' => $perPage,
+        'perPageOptions' => $perPageOptions,
         'empty' => $empty,
         'searchPlaceholder' => $searchPlaceholder,
     ]) }})"
@@ -56,6 +58,19 @@
 
     {{-- Pagination --}}
     <div class="flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100">
+        <div class="flex items-center gap-2" x-show="filteredRows.length > 0">
+            <label class="text-xs text-gray-500">Tampilkan</label>
+            <select
+                x-model.number="perPage"
+                @change="page = 1"
+                class="px-2 py-1 text-xs border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sp-primary/20 focus:border-sp-primary"
+            >
+                <template x-for="opt in perPageOptions" :key="opt">
+                    <option :value="opt" x-text="opt"></option>
+                </template>
+            </select>
+            <label class="text-xs text-gray-500">per halaman</label>
+        </div>
         <p class="text-xs text-gray-500" x-show="filteredRows.length > 0">
             Menampilkan <span x-text="start"></span>–<span x-text="end"></span> dari <span x-text="filteredRows.length"></span> data
         </p>
