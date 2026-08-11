@@ -113,20 +113,18 @@
                                 {{ $role->is_active ? 'Aktif' : 'Tidak Aktif' }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                            <button type="button" @click="openEdit({{ Js::from($roleData) }})"
-                                class="inline-flex items-center justify-center w-7 h-7 rounded-md text-sp-primary hover:bg-sp-primary/10 mr-1.5 transition-colors" title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <form action="{{ route('roles.destroy', $role) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="inline-flex items-center justify-center w-7 h-7 rounded-md text-red-500 hover:bg-red-50 transition-colors"
-                                    title="Hapus" onclick="return confirm('Yakin ingin menghapus role ini?')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <x-actions>
+                                <x-actions-item icon="bi-pencil" label="Edit" @click="openEdit({{ Js::from($roleData) }})" />
+                                <x-actions-form
+                                    action="{{ route('roles.destroy', $role) }}"
+                                    method="DELETE"
+                                    icon="bi-trash"
+                                    label="Hapus"
+                                    color="text-gray-700 hover:bg-red-50 hover:text-red-600"
+                                    confirm="Yakin ingin menghapus role ini?"
+                                />
+                            </x-actions>
                         </td>
                     </tr>
                     @endforeach

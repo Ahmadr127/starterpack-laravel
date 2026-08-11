@@ -48,21 +48,22 @@
                     @endif
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                    <a href="{{ route('users.edit', $user) }}" class="inline-flex items-center gap-1 text-sp-primary hover:text-sp-primary-dark mr-2">
-                        <i class="bi bi-pencil"></i> Edit
-                    </a>
-                    @if($user->id !== auth()->id())
-                    <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="inline-flex items-center gap-1 text-red-500 hover:text-red-700" onclick="return confirm('Yakin ingin menghapus user ini?')">
-                            <i class="bi bi-trash"></i> Hapus
-                        </button>
-                    </form>
-                    @else
-                    <span class="text-gray-400">(Akun Anda)</span>
-                    @endif
+                <td class="px-4 py-3 whitespace-nowrap">
+                    <x-actions>
+                        <x-actions-item href="{{ route('users.edit', $user) }}" icon="bi-pencil" label="Edit" />
+                        @if($user->id !== auth()->id())
+                        <x-actions-form
+                            action="{{ route('users.destroy', $user) }}"
+                            method="DELETE"
+                            icon="bi-trash"
+                            label="Hapus"
+                            color="text-gray-700 hover:bg-red-50 hover:text-red-600"
+                            confirm="Yakin ingin menghapus user ini?"
+                        />
+                        @else
+                        <div class="px-3 py-2 text-sm text-gray-400">(Akun Anda)</div>
+                        @endif
+                    </x-actions>
                 </td>
             </tr>
             @endforeach
