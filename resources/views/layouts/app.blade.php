@@ -84,7 +84,7 @@
                                 <div class="mb-1" x-data="{ open: {{ $isOpen ? 'true' : 'false' }} }">
                                     <button @click="open = !open" 
                                             class="sidebar-btn w-full justify-between">
-                                        <div class="flex items-center">
+                                        <div class="flex items-center gap-3">
                                             <i class="bi {{ $item['icon'] }} sidebar-icon"></i>
                                             <span class="sidebar-text">{{ $item['label'] }}</span>
                                         </div>
@@ -104,7 +104,7 @@
                                             <a href="{{ route($child['route']) }}" 
                                                class="{{ request()->routeIs($child['route_pattern']) ? 'active' : '' }}"
                                                title="{{ $child['label'] }}">
-                                                <i class="bi {{ $child['icon'] }}"></i>
+                                                <i class="bi {{ $child['icon'] }} sidebar-icon"></i>
                                                 <span class="sidebar-text">{{ $child['label'] }}</span>
                                             </a>
                                             @endif

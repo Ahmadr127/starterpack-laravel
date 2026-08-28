@@ -84,7 +84,7 @@
 
     /* Submenu (Simmutu: 0.6rem 1.7rem, 0.85rem) */
     .sidebar-submenu a {
-        @apply flex items-center gap-2 px-[1.7rem] py-[0.6rem] my-[0.2rem] text-sp-navy text-[0.85rem] font-semibold tracking-wide rounded-lg transition-all duration-200;
+        @apply flex items-center gap-3 px-[1.7rem] py-[0.6rem] my-[0.2rem] text-sp-navy text-[0.85rem] font-semibold tracking-wide rounded-lg transition-all duration-200;
     }
 
     .sidebar-submenu a i {
@@ -97,10 +97,6 @@
 
     .sidebar-submenu a:hover i {
         @apply text-sp-primary;
-    }
-
-    .sidebar-submenu a:hover {
-        padding-left: 1.9rem;
     }
 
     .sidebar-submenu a.active {
