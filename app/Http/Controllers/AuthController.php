@@ -16,11 +16,6 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function showRegister()
-    {
-        $roles = Role::all();
-        return view('auth.register', compact('roles'));
-    }
 
     public function login(Request $request)
     {
