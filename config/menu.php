@@ -88,4 +88,16 @@ return [
             ],
         ],
     ],
+    [
+        'title' => 'Laporan',
+        'menus' => [
+            [
+                'label' => 'Audit Log',
+                'icon' => 'bi-clock-history',
+                'route' => 'activity-logs.index',
+                'route_pattern' => 'activity-logs.*',
+                'permission' => 'view_activity_logs',
+            ],
+        ],
+    ],
 ];

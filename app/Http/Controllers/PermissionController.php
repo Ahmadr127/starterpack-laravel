@@ -2,38 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Permission\Store;
+use App\Http\Requests\Permission\Update;
+use App\Http\Services\PermissionService;
 use App\Models\Permission;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class PermissionController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(protected PermissionService $permissionService) {}
+
+    public function index(\Illuminate\Http\Request $request)
     {
-        $query = Permission::with('roles');
-
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('display_name', 'like', "%{$search}%");
-            });
-        }
-
-        // Date range filter
-        if ($request->filled('date_from')) {
-            $query->where('created_at', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->where('created_at', '<=', $request->date_to);
-        }
-
-        $perPage = in_array((int) $request->input('per_page', 10), [5, 10, 25, 50, 100]) ? (int) $request->input('per_page', 10) : 10;
-
-        $permissions = $query->latest()->paginate($perPage)->withQueryString();
-        
+        $permissions = $this->permissionService->getPermissions($request->only(['search', 'date_from', 'date_to', 'per_page']));
         return view('permissions.index', compact('permissions'));
     }
 
@@ -42,24 +22,9 @@ class PermissionController extends Controller
         return view('permissions.create');
     }
 
-    public function store(Request $request)
+    public function store(Store $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:permissions',
-            'display_name' => 'required|string|max:255',
-            'description' => 'nullable|string'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        Permission::create([
-            'name' => $request->name,
-            'display_name' => $request->display_name,
-            'description' => $request->description
-        ]);
-
+        $this->permissionService->createPermission($request->validated());
         return redirect()->route('permissions.index')->with('success', 'Permission berhasil dibuat!');
     }
 
@@ -68,30 +33,15 @@ class PermissionController extends Controller
         return view('permissions.edit', compact('permission'));
     }
 
-    public function update(Request $request, Permission $permission)
+    public function update(Update $request, Permission $permission)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:permissions,name,' . $permission->id,
-            'display_name' => 'required|string|max:255',
-            'description' => 'nullable|string'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $permission->update([
-            'name' => $request->name,
-            'display_name' => $request->display_name,
-            'description' => $request->description
-        ]);
-
+        $this->permissionService->updatePermission($permission, $request->validated());
         return redirect()->route('permissions.index')->with('success', 'Permission berhasil diperbarui!');
     }
 
     public function destroy(Permission $permission)
     {
-        $permission->delete();
+        $this->permissionService->deletePermission($permission);
         return redirect()->route('permissions.index')->with('success', 'Permission berhasil dihapus!');
     }
 }

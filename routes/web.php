@@ -8,6 +8,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\OrganizationTypeController;
 use App\Http\Controllers\OrganizationUnitController;
+use App\Http\Controllers\ActivityLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,13 @@ Route::middleware('auth')->group(function () {
     // User Management routes
     Route::middleware('permission:manage_users')->group(function () {
         Route::resource('users', UserController::class);
+    });
+
+    // Audit Log routes
+    Route::middleware('permission:view_activity_logs')->group(function () {
+        Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('activity-logs/{activityLog}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
+        Route::get('activity-logs/subject/{type}/{id}', [ActivityLogController::class, 'forSubject'])->name('activity-logs.subject');
     });
 
     // Role Management routes
