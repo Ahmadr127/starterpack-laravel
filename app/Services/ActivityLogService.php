@@ -84,8 +84,8 @@ class ActivityLogService
             'causer_type' => $causer ? get_class($causer) : null,
             'causer_id' => $causer?->getKey(),
             'properties' => $properties,
-            'ip_address' => $request?->ip(),
-            'user_agent' => $request?->userAgent(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
             'batch_uuid' => (string) Str::uuid(),
         ]);
     }

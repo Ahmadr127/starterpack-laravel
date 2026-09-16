@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Services\ActivityLogService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait Auditable
 {
@@ -56,7 +57,10 @@ trait Auditable
         return property_exists(static::class, 'autoAudit') && static::$autoAudit === true;
     }
 
-    public function activityLogs()
+    /**
+     * @return MorphMany<\App\Models\ActivityLog, $this>
+     */
+    public function activityLogs(): MorphMany
     {
         return $this->morphMany(\App\Models\ActivityLog::class, 'subject')->latest();
     }

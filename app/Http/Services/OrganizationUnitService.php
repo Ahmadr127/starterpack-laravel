@@ -29,7 +29,7 @@ class OrganizationUnitService
         if (!empty($filters['parent_id'])) {
             $query->where('parent_id', $filters['parent_id']);
         }
-        if (isset($filters['is_active']) && $filters['is_active'] !== '' && $filters['is_active'] !== null) {
+        if (array_key_exists('is_active', $filters) && $filters['is_active'] !== '' && $filters['is_active'] !== null) {
             $query->where('is_active', $filters['is_active']);
         }
 

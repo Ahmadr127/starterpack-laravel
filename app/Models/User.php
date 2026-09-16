@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -50,12 +51,15 @@ class User extends Authenticatable
         ];
     }
 
-    public function role()
+    /**
+     * @return BelongsTo<Role, $this>
+     */
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
-    public function hasRole($role)
+    public function hasRole($role): bool
     {
         if (is_string($role)) {
             return $this->role->name === $role;
@@ -63,12 +67,15 @@ class User extends Authenticatable
         return $this->role->id === $role->id;
     }
 
-    public function hasPermission($permission)
+    public function hasPermission($permission): bool
     {
         return $this->role->hasPermission($permission);
     }
 
-    public function organizationUnit()
+    /**
+     * @return BelongsTo<OrganizationUnit, $this>
+     */
+    public function organizationUnit(): BelongsTo
     {
         return $this->belongsTo(OrganizationUnit::class);
     }

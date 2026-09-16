@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrganizationUnit extends Model
 {
-    use HasFactory;
+    use HasFactory, Auditable;
 
     protected $fillable = [
         'name',
@@ -25,56 +29,70 @@ class OrganizationUnit extends Model
 
     /**
      * Get the type of this organization unit
+     *
+     * @return BelongsTo<OrganizationType, $this>
      */
-    public function type()
+    public function type(): BelongsTo
     {
         return $this->belongsTo(OrganizationType::class, 'type_id');
     }
 
     /**
      * Get the parent organization unit
+     *
+     * @return BelongsTo<OrganizationUnit, $this>
      */
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(OrganizationUnit::class, 'parent_id');
     }
 
     /**
      * Get all child organization units
+     *
+     * @return HasMany<OrganizationUnit, $this>
      */
-    public function children()
+    public function children(): HasMany
     {
         return $this->hasMany(OrganizationUnit::class, 'parent_id');
     }
 
     /**
      * Get all descendants recursively
+     *
+     * @return HasMany<OrganizationUnit, $this>
      */
-    public function descendants()
+    public function descendants(): HasMany
     {
         return $this->children()->with('descendants');
     }
 
     /**
      * Get the head/manager of this unit
+     *
+     * @return BelongsTo<User, $this>
      */
-    public function head()
+    public function head(): BelongsTo
     {
         return $this->belongsTo(User::class, 'head_id');
     }
 
     /**
      * Get all users/members in this unit
+     *
+     * @return HasMany<User, $this>
      */
-    public function members()
+    public function members(): HasMany
     {
         return $this->hasMany(User::class, 'organization_unit_id');
     }
 
     /**
      * Get all ancestors (parent hierarchy)
+     *
+     * @return Collection<int, OrganizationUnit>
      */
-    public function ancestors()
+    public function ancestors(): Collection
     {
         $ancestors = collect();
         $parent = $this->parent;
@@ -90,13 +108,16 @@ class OrganizationUnit extends Model
     /**
      * Get the full path as string (e.g., "PT > RS > Direktorat > Departemen")
      */
-    public function getFullPathAttribute()
+    public function getFullPathAttribute(): string
     {
         return $this->ancestors()->reverse()->pluck('name')->push($this->name)->implode(' > ');
     }
 
     /**
      * Scope for active units only
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<OrganizationUnit> $query
+     * @return \Illuminate\Database\Eloquent\Builder<OrganizationUnit>
      */
     public function scopeActive($query)
     {
@@ -105,6 +126,9 @@ class OrganizationUnit extends Model
 
     /**
      * Scope for root units (no parent)
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<OrganizationUnit> $query
+     * @return \Illuminate\Database\Eloquent\Builder<OrganizationUnit>
      */
     public function scopeRoot($query)
     {
