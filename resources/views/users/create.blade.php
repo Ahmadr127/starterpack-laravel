@@ -29,11 +29,10 @@
                 <x-input name="password_confirmation" label="Konfirmasi Password" type="password" :required="true" />
 
                 <div class="md:col-span-2">
-                    <x-searchable-dropdown
+                    <x-searchable-select
                         name="role_id"
                         label="Role"
-                        :options="$roles"
-                        label-field="display_name"
+                        :options="$roles->map(fn($r) => ['value' => $r->id, 'label' => $r->display_name])"
                         :selected="old('role_id')"
                         placeholder="Pilih Role..."
                         :required="true"

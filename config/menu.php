@@ -35,7 +35,7 @@ return [
             [
                 'label' => 'Pengguna & Akses',
                 'icon' => 'bi-person-fill-gear',
-                'permissions' => ['manage_users', 'manage_roles', 'manage_permissions'],
+                'permissions' => ['manage_users', 'manage_roles'],
                 'children' => [
                     [
                         'label' => 'Users',
@@ -50,13 +50,6 @@ return [
                         'route' => 'roles.index',
                         'route_pattern' => 'roles.*',
                         'permission' => 'manage_roles',
-                    ],
-                    [
-                        'label' => 'Permissions',
-                        'icon' => 'bi-key-fill',
-                        'route' => 'permissions.index',
-                        'route_pattern' => 'permissions.*',
-                        'permission' => 'manage_permissions',
                     ],
                 ],
             ],

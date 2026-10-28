@@ -3,6 +3,25 @@
 @section('title', 'Tambah Unit Organisasi')
 
 @section('content')
+@php
+    $typeOptions = $types->map(fn ($t) => [
+        'value' => $t->id,
+        'label' => 'Level ' . $t->level . ': ' . $t->display_name,
+    ]);
+
+    $parentOptions = collect([['value' => '', 'label' => 'Tidak Ada (Root)']])
+        ->concat($parentUnits->map(fn ($p) => [
+            'value' => $p->id,
+            'label' => $p->name . ' (' . $p->type->display_name . ')',
+        ]));
+
+    $userOptions = collect([['value' => '', 'label' => 'Belum Ditentukan']])
+        ->concat($users->map(fn ($u) => [
+            'value' => $u->id,
+            'label' => $u->name . ' (' . $u->email . ')',
+        ]));
+@endphp
+
 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
     <div class="p-6 bg-white border-b border-gray-200">
         <div class="flex justify-between items-center mb-6">
@@ -38,42 +57,33 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {{-- Tipe Organisasi - Searchable Dropdown --}}
-                    <x-searchable-dropdown
+                    {{-- Tipe Organisasi - Searchable Select --}}
+                    <x-searchable-select
                         name="type_id"
                         label="Tipe Organisasi"
-                        :options="$types->map(fn($t) => (object)['id' => $t->id, 'name' => 'Level ' . $t->level . ': ' . $t->display_name])"
-                        value-field="id"
-                        label-field="name"
+                        :options="$typeOptions"
                         :selected="old('type_id')"
                         placeholder="Pilih Tipe..."
                         :required="true"
                     />
 
-                    {{-- Parent Unit - Searchable Dropdown --}}
-                    <x-searchable-dropdown
+                    {{-- Parent Unit - Searchable Select --}}
+                    <x-searchable-select
                         name="parent_id"
                         label="Parent Unit"
-                        :options="$parentUnits->map(fn($p) => (object)['id' => $p->id, 'name' => $p->name, 'group' => $p->type->display_name])"
-                        value-field="id"
-                        label-field="name"
-                        group-field="group"
+                        :options="$parentOptions"
                         :selected="old('parent_id')"
                         placeholder="Pilih Parent..."
-                        empty-option="Tidak Ada (Root)"
                     />
                 </div>
 
-                {{-- Kepala Unit - Searchable Dropdown --}}
-                <x-searchable-dropdown
+                {{-- Kepala Unit - Searchable Select --}}
+                <x-searchable-select
                     name="head_id"
                     label="Kepala Unit"
-                    :options="$users->map(fn($u) => (object)['id' => $u->id, 'name' => $u->name . ' (' . $u->email . ')'])"
-                    value-field="id"
-                    label-field="name"
+                    :options="$userOptions"
                     :selected="old('head_id')"
                     placeholder="Pilih Kepala Unit..."
-                    empty-option="Belum Ditentukan"
                 />
 
                 <div>

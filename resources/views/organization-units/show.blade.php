@@ -91,17 +91,13 @@
                         @csrf
                         @method('PATCH')
                         <div class="flex gap-2 items-end">
-                            <div class="flex-1">
-                                <x-searchable-dropdown
-                                    name="head_id"
-                                    :options="$allUsers->map(fn($u) => (object)['id' => $u->id, 'name' => $u->name])"
-                                    value-field="id"
-                                    label-field="name"
-                                    :selected="$organizationUnit->head_id"
-                                    placeholder="Pilih Kepala Unit..."
-                                    empty-option="-- Tidak Ada --"
-                                />
-                            </div>
+                            <x-searchable-select
+                                name="head_id"
+                                class="flex-1"
+                                :options="collect([['value' => '', 'label' => '-- Tidak Ada --']])->concat($allUsers->map(fn($u) => ['value' => $u->id, 'label' => $u->name]))"
+                                :selected="$organizationUnit->head_id"
+                                placeholder="Pilih Kepala Unit..."
+                            />
                             <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm h-[38px]">
                                 Simpan
                             </button>
@@ -148,17 +144,14 @@
                     <form action="{{ route('organization-units.add-member', $organizationUnit) }}" method="POST" class="mb-4">
                         @csrf
                         <div class="flex gap-2 items-end">
-                            <div class="flex-1">
-                                <x-searchable-dropdown
-                                    name="user_id"
-                                    :options="$availableUsers->map(fn($u) => (object)['id' => $u->id, 'name' => $u->name . ' (' . $u->email . ')'])"
-                                    value-field="id"
-                                    label-field="name"
-                                    :selected="null"
-                                    placeholder="Pilih User untuk Ditambahkan..."
-                                    :required="true"
-                                />
-                            </div>
+                            <x-searchable-select
+                                name="user_id"
+                                class="flex-1"
+                                :options="$availableUsers->map(fn($u) => ['value' => $u->id, 'label' => $u->name . ' (' . $u->email . ')'])"
+                                :selected="old('user_id')"
+                                placeholder="Pilih User untuk Ditambahkan..."
+                                :required="true"
+                            />
                             <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm whitespace-nowrap h-[38px]">
                                 <i class="fas fa-plus mr-1"></i> Tambah
                             </button>

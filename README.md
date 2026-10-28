@@ -6,7 +6,7 @@ Starterpack Laravel ini menyediakan fitur otentikasi (login/register/logout) ser
 
 - **Authentication**: Login, Register, Logout
 - **Manajemen User**: CRUD user, filter & pencarian
-- **Role & Permission**: CRUD role & permission, assign ke user
+- **Role & Permission**: CRUD role, atur permission per role lewat matriks centang
 - **Proteksi Route**: Middleware berbasis permission
 - **UI Sederhana**: Blade + Tailwind, siap dikembangkan
 - **Code Quality**: PHPStan 2.x + Larastan 3.x (level 5, `phpstan.neon`)
@@ -57,7 +57,7 @@ Setelah seeding, tersedia akun admin:
 ## Struktur Fitur
 
 - **routes/web.php**  
-  Routing otentikasi, dashboard, user, role, permission, dengan proteksi middleware.
+  Routing otentikasi, dashboard, user, role, dengan proteksi middleware.
 - **database/seeders/DatabaseSeeder.php**  
   Seeder untuk role, permission, dan user admin.
 - **resources/views/users/index.blade.php**  
@@ -67,12 +67,11 @@ Setelah seeding, tersedia akun admin:
 
 ## Manajemen Role & Permission
 
-- Tambahkan/ubah role & permission di menu Role dan Permission.
+- Tambahkan/ubah role di menu Roles; atur permission tiap role lewat tombol centang pada matriks (baris = permission, kolom = role).
 - Assign role ke user saat create/edit user.
 - Middleware:  
   - `permission:manage_users`  
-  - `permission:manage_roles`  
-  - `permission:manage_permissions`
+  - `permission:manage_roles`
 
 ## Kustomisasi
 

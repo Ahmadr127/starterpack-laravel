@@ -94,7 +94,7 @@ class OrganizationUnit extends Model
      */
     public function ancestors(): Collection
     {
-        $ancestors = collect();
+        $ancestors = new Collection();
         $parent = $this->parent;
 
         while ($parent) {

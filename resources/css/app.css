@@ -24,6 +24,11 @@
     html {
         font-size: 75%;
     }
+
+    /* Sembunyikan elemen Alpine sebelum inisialisasi (mis. dropdown) */
+    [x-cloak] {
+        display: none !important;
+    }
 }
 
 @layer components {

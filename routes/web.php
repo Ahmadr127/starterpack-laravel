@@ -5,7 +5,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\OrganizationTypeController;
 use App\Http\Controllers\OrganizationUnitController;
 use App\Http\Controllers\ActivityLogController;
@@ -55,13 +54,14 @@ Route::middleware('auth')->group(function () {
 
     // Role Management routes
     Route::middleware('permission:manage_roles')->group(function () {
+        Route::post('roles/{role}/permissions/{permission}/toggle', [RoleController::class, 'togglePermission'])
+            ->name('roles.permissions.toggle');
+
         Route::resource('roles', RoleController::class);
     });
 
     // Permission Management routes
-    Route::middleware('permission:manage_permissions')->group(function () {
-        Route::resource('permissions', PermissionController::class);
-    });
+    // Dihapus: permission dikelola lewat matriks di halaman Roles.
 
     // Organization Type Management routes
     Route::middleware('permission:manage_organization_types')->group(function () {

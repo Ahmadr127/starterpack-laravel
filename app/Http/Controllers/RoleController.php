@@ -15,7 +15,7 @@ class RoleController extends Controller
     public function index(\Illuminate\Http\Request $request)
     {
         $roles = $this->roleService->getRoles($request->only(['search', 'date_from', 'date_to', 'per_page']));
-        $permissions = Permission::all();
+        $permissions = Permission::orderBy('name')->get();
         $stats = $this->roleService->getStats();
 
         return view('roles.index', [
@@ -59,5 +59,17 @@ class RoleController extends Controller
         }
 
         return redirect()->route('roles.index')->with('success', 'Role berhasil dihapus!');
+    }
+
+    /**
+     * Toggle satu permission pada sebuah role (dipakai matriks di halaman Roles).
+     */
+    public function togglePermission(Role $role, Permission $permission)
+    {
+        $result = $role->permissions()->toggle($permission->id);
+
+        return response()->json([
+            'attached' => count($result['attached']) > 0,
+        ]);
     }
 }

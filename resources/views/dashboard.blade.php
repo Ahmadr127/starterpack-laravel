@@ -29,16 +29,6 @@
                 </div>
             </a>
             @endif
-
-            @if($user->hasPermission('manage_permissions'))
-            <a href="{{ route('permissions.index') }}" class="flex items-center p-3 bg-purple-500/5 hover:bg-purple-500/10 rounded-lg transition-colors group">
-                <div class="w-9 h-9 bg-purple-500 rounded-lg flex items-center justify-center mr-3 text-white flex-shrink-0 shadow-sm"><i class="bi bi-key-fill"></i></div>
-                <div>
-                    <div class="font-semibold text-sp-navy">Kelola Permission</div>
-                    <div class="text-xs text-purple-500">Manajemen izin akses</div>
-                </div>
-            </a>
-            @endif
         </div>
     </x-card>
 
